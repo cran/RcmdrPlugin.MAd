@@ -1,7 +1,7 @@
 # Rcmdr menus for the MAd package
 # When the plug-in is loaded, these menus are merged with the standard Rcmdr menus 
 
-# last modified: 03.12.2010 by AC Del Re
+# last modified: 03.13.2010 by AC Del Re
 
 ##===================== MAIN MAd MENU ========================##
 
@@ -21,7 +21,7 @@ item    MAdMenu 		cascade         "Calculate Effect Sizes"            		 		CalcE
 # Calculate ES menu
 
 menu    corMenu			MAdMenu     						""                                  	"" 			               	  ""				   ""
-menu    meansMenu		MAdMenu     						""                                   	"" 			               		  ""				   ""
+menu    mnMenu		MAdMenu     						""                                   	"" 			               		  ""				   ""
 menu    orMenu			MAdMenu     						""                                   	"" 			                		""				   ""
    
 # Correlation
@@ -34,29 +34,29 @@ item    corMenu	      command             "r to d"						                   r_to_
 item    CalcESMenu	  cascade             "Correlational"        		  	      	 corMenu 										""							""
 
 # Mean Differences
-menu     meansMenu		  CalcESMenu          ""																				""							 						""						 					""
-item     meansMenu	    command       	    "Automated mean differences (d & g)"   MeanDiffcmd				 	 				""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "Automated mean differences (d)"       MeanDiffdcmd                  ""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "Automated mean differences (g)"       MeanDiffgcmd                   ""                      "packageAvailable('MAd')"
-item     meansMenu	    command         	  "ancova to d (adj. SD)" 				     	 ancova_to_d1cmd     		     		""                      "packageAvailable('MAd')"
-item     meansMenu	    command       	    "ancova to d (pooled SD)"				       ancova_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "d to unbiased g"       							 d_to_gcmd                  ""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "f-value (ANCOVA) to d"                f.ancova_to_dcmd                   ""                      "packageAvailable('MAd')"
-item     meansMenu	    command         	  "f to d"				          		  			 f_to_dcmd     		     		""                      "packageAvailable('MAd')"
-item     meansMenu	    command       	    "raw means and SDs to d"               mean_to_dcmd				 	 				""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "means with pooled SD to d"            mean_to_d2cmd                  ""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "one-tailed p-value (ANCOVA) to d"     p.ancova_to_d1cmd                   ""                      "packageAvailable('MAd')"
-item     meansMenu	    command       	    "two-tailed p-value (ANCOVA) to d"     p.ancova_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "one-tailed p-value to d"     				 p_to_d2cmd                   ""                      "packageAvailable('MAd')"
-item     meansMenu	    command       	    "two-tailed p-value to d"     				 p_to_d1cmd				 	 				""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "t-test to d"    									     t_to_dcmd                  ""                      "packageAvailable('MAd')"
-item     meansMenu	    command             "t-test (ANCOVA) to d"                 tt.ancova_to_dcmd                   ""                      "packageAvailable('MAd')"
-item     meansMenu	    command       	    "r from d (n of both grps same)"       r_from_dcmd				 	 			""              "packageAvailable('MAd')"
-item     meansMenu	    command             "r from d (n of both grps not same)"   r_from_d1cmd               ""              "packageAvailable('MAd')"
-item     meansMenu	    command             "r to d"						                   r_to_dcmd              		  ""             "packageAvailable('MAd')"
-item     meansMenu		  command         	  "log odds ratio to d"        		   		 lor_to_dcmd     		      ""                      "packageAvailable('MAd')"
-item     meansMenu	 	  command       	    "proportions to d"                     prop_to_dcmd				 	 				""                      "packageAvailable('MAd')"
-item     CalcESMenu	    cascade             "Mean Differences"        		  	   	 meansMenu 		        				 ""                      ""
+menu     mnMenu		  CalcESMenu          ""																				""							 						""						 					""
+item     mnMenu	    command       	    "Automated mean differences (d & g)"   MeanDiffcmd				 	 				""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "Automated mean differences (d)"       MeanDiffdcmd                  ""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "Automated mean differences (g)"       MeanDiffgcmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command         	  "ancova to d (adj SD)" 				     	 ancova_to_d1cmd     		     		""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "ancova to d (pooled SD)"				       ancova_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "d to unbiased g"       							 d_to_gcmd                  ""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "f-value (ANCOVA) to d"                f.ancova_to_dcmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command         	  "f to d"				          		  			 f_to_dcmd     		     		""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "raw means and SDs to d"               mean_to_dcmd				 	 				""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "means with pooled SD to d"            mean_to_d2cmd                  ""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "one-tailed p-value (ANCOVA) to d"     p.ancova_to_d1cmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "two-tailed p-value (ANCOVA) to d"     p.ancova_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "one-tailed p-value to d"     				 p_to_d2cmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "two-tailed p-value to d"     				 p_to_d1cmd				 	 				""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "t-test to d"    									     t_to_dcmd                  ""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "t-test (ANCOVA) to d"                 tt.ancova_to_dcmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "r from d (n of both grps same)"       r_from_dcmd				 	 			""              "packageAvailable('MAd')"
+item     mnMenu	    command             "r from d (n of both grps not same)"   r_from_d1cmd               ""              "packageAvailable('MAd')"
+item     mnMenu	    command             "r to d"						                   r_to_dcmd              		  ""             "packageAvailable('MAd')"
+item     mnMenu		  command         	  "log odds ratio to d"        		   		 lor_to_dcmd     		      ""                      "packageAvailable('MAd')"
+item     mnMenu	 	  command       	    "proportions to d"                     prop_to_dcmd				 	 				""                      "packageAvailable('MAd')"
+item     CalcESMenu	    cascade             "Mean Differences"        		  	   	 mnMenu 		        				 ""                      ""
 
 # Odds Ratio
 menu    orMenu			CalcESMenu            ""																				""													""										 ""
@@ -114,7 +114,7 @@ menu 		OtherMenu			MAdMenu     	""                                    		 			""  
 item    OtherMenu	    command         "Complete dataset"					       			  ComplDatacmd			 		 ""                "packageAvailable('plyr') && packageAvailable('ggplot2')"
 item    OtherMenu	    command         "Add weights to dataset"					        Wifuncmd			 		 ""                "packageAvailable('plyr') && packageAvailable('ggplot2')"
 item    OtherMenu	    command         "Correction for attenuation"           		CorAttencmd         			""                  "packageAvailable('MAd')"
-item    OtherMenu     command         "Agreement: Kappa (cat. data)"   	        Kappacmd                    ""                      "packageAvailable('MAd')"
+item    OtherMenu     command         "Agreement: Kappa (cat data)"   	        Kappacmd                    ""                      "packageAvailable('MAd')"
 item    OtherMenu     command         "Publication Bias"						   	        PubBiascmd                    ""                      "packageAvailable('MAd')"
 item    MAdMenu       cascade         "Other functions"      				   	   		  OtherMenu                   ""						""
 

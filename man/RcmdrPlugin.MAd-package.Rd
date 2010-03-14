@@ -3,12 +3,12 @@
 \docType{package}
 \title{Meta-Analysis with Mean Differences (MAd) Rcmdr Plug-in
 }
-\description{ This package provides an Rcmdr plug-in for the \bold{MAd} package, which is useful for conducting meta-analyses with mean differences data.  This Rcmdr plug-in package will run all of the meta-analytic functions from the \bold{MAc} package though a familiar Graphical User Interface (GUI) environment (e.g., SPSS). For more details regarding the \bold{MAd} package, please see the \bold{MAd} link on the CRAN website \url{http://CRAN.R-project.org/package=MAd}
+\description{ This package provides an Rcmdr plug-in for the \bold{MAd} package, which is useful for conducting meta-analyses with mean differences data.  This package will run all of the meta-analytic functions from the \bold{MAd} package though a familiar Graphical User Interface (GUI) environment (e.g., SPSS). For more details regarding the \bold{MAd} package, please see the \bold{MAd} link on the CRAN website \url{http://CRAN.R-project.org/package=MAd}
 \tabular{ll}{
 Package: \tab RcmdrPlugin.MAd-package\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
-Date: \tab 2010-03-12\cr
+Version: \tab 0.2\cr
+Date: \tab 2010-03-14\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
@@ -29,11 +29,11 @@ Maintainer: AC Del Re <acdelre@gmail.com>
 #     to have a column for id (study id), m.1 (post-test mean for treatment group), 
 #     n.1 (treatment sample size), sd.1 (treatment standard deviation), m.2 (post-test 
 #     mean for control/comparison group), n.2 (control/comparison sample size), 
-#     sd.2 (control/comparison standard deviation). Alternatively, having columns
-#     for d and/or g (standardized mean difference), var.d and/or var.g (variance of
-#     standardized mean difference), n.1 (treatment sample size), n.2 
+#     sd.2 (control/comparison standard deviation), and all moderators. Alternatively, 
+#     having columns for d and/or g (standardized mean difference), var.d and/or var.g 
+#     (variance of standardized mean difference), n.1 (treatment sample size), n.2 
 #     (control/comparison sample size). All other variables (i.e., moderators) 
-#     can be named to ones liking.
+#     can be named to ones liking and should be integrated in the same dataset.
 #     Note: this package requires the names of the required variables to be named 
 #     exactly as stated above or the functions will not output data. 
 # 2.  Import the worksheet or data into R:
@@ -71,7 +71,7 @@ Maintainer: AC Del Re <acdelre@gmail.com>
 }  
 \keyword{ package }
 \seealso{
-\bold{MAd} package:  \url{http://CRAN.R-project.org/package=MAd}
-\bold{MAc} package:  \url{http://CRAN.R-project.org/package=MAc}
-\bold{MAc} package:  \url{http://CRAN.R-project.org/package=RcmdrPlugin.MAc}
+\bold{MAd} package:  \url{http://CRAN.R-project.org/package=MAd};
+\bold{MAc} package:  \url{http://CRAN.R-project.org/package=MAc};
+\bold{RcmdrPlugin.MAc} package:  \url{http://CRAN.R-project.org/package=RcmdrPlugin.MAc}
 }
