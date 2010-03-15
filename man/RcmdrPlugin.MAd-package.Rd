@@ -7,8 +7,8 @@
 \tabular{ll}{
 Package: \tab RcmdrPlugin.MAd-package\cr
 Type: \tab Package\cr
-Version: \tab 0.2\cr
-Date: \tab 2010-03-14\cr
+Version: \tab 0.3\cr
+Date: \tab 2010-03-15\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
