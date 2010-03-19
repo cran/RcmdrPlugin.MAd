@@ -16,6 +16,61 @@ Commander()
 
 #== New Functions (3.07.10) ==##
 
+# facts 3.18.10
+
+factscmd <- function(){
+  dataSet <- activeDataSet()
+  initializeDialog(title=gettextRcmdr("Convert to Categorical Variable"))
+  variablesFrame <- tkframe(top)
+  .variable <- Variables()
+  xBox <- variableListBox(variablesFrame, .variable, selectmode="multiple",
+            title=gettextRcmdr("variable to convert to categorical (pick one)"))
+  newDataSetName <- tclVar(gettextRcmdr("<same as active data set>"))
+	dataSetNameFrame <- tkframe(top)
+	dataSetNameEntry <- ttkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
+	onOK <- function(){
+		newName <- trim.blanks(tclvalue(newDataSetName))
+		if (newName == gettextRcmdr("<same as active data set>")) newName <- ActiveDataSet()
+		if (!is.valid.name(newName)){
+			errorCondition(recall=factscmd,
+				message=paste('"', newName, '" ', gettextRcmdr("is not a valid name."), sep=""))
+			return()
+		}
+		if (is.element(newName, listDataSets())) {
+			if ("no" == tclvalue(checkReplace(newName, type=gettextRcmdr("Data set")))){
+				closeDialog()
+				RemoveRows()
+				return()
+			}
+		}
+    x <- getSelection(xBox)
+    closeDialog()
+       meta <- dataSet
+       #modelN <- as.character(tclvalue(modelNVariable)) 
+       #command <- paste("ComplData(", meta, ", ", paste(x, collapse=","),
+       #                 ", type= '",modelN,"')", sep="")
+       #command <- paste(newName, " <- ", ActiveDataSet(), "[", removeRows, ",]", sep="")
+		   #logger(command)
+		   #result <- justDoIt(command)
+       #command <- paste("facts(", meta, ",", meta, "$", x, ")", sep="")
+       command <- paste("facts(", meta, ",'", x, "')", sep="")
+       logger(paste(newName, " <- ", command, sep=""))
+       assign(newName, justDoIt(command), envir=.GlobalEnv)
+       doItAndPrint(newName)
+       tkfocus(CommanderWindow())
+  }
+  OKCancelHelp(helpSubject="facts", model=TRUE)
+  tkgrid(labelRcmdr(dataSetNameFrame, text=gettextRcmdr("Name for new data set")), sticky="w")
+	tkgrid(dataSetNameEntry, sticky="w")
+	tkgrid(dataSetNameFrame, sticky="w")
+  tkgrid(labelRcmdr(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
+  tkgrid(variablesFrame, sticky="w")
+  tkgrid(buttonsFrame, stick="w")
+  tkgrid.configure(helpButton, sticky="e")
+  dialogSuffix(rows=4, columns=2)
+}
+
+
 # ancova to d1
 
 ancova_to_d1cmd <- function(){

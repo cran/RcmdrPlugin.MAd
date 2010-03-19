@@ -10,7 +10,7 @@
 #menu    MAdMenu	        topMenu     		""                                   	 ""                           ""				    ""
 #item    topMenu         cascade         	"MAd"                                MAdMenu                      ""			        ""
 
-# main menu
+# main MAd menu
 menu    MAdMenu	    topMenu     		""                                   	 ""                           ""				    ""
 menu    CalcESMenu	MAdMenu     			""                                  		 "" 			                 ""				   ""
 menu    AggMenu		  MAdMenu     			""                                   				"" 			                 ""				   ""
@@ -18,13 +18,12 @@ menu    ModMenu		 	MAdMenu     			""                            		  			""       
 menu 	  GraphMenu		MAdMenu     	      ""                                     		""                          ""						""
 menu 		OtherMenu		MAdMenu     	""                                    		 			""                         ""						""
  
+item    topMenu     cascade         "MAd"                                MAdMenu                      ""			        ""
 item    MAdMenu 		cascade         "Calculate Effect Sizes"             CalcESMenu                   	 ""				    ""
 item    MAdMenu     cascade         "Within-study aggregation"           AggMenu                     	 ""					""
-item    MAdMenu		  command         "Omnibus analysis"        	  			 OmnibusEScmd			          ""                     		"packageAvailable('MAd') && packageAvailable('plyr')"
 item    MAdMenu     cascade         "Moderator analysis"                 ModMenu                 	""						""
 item    MAdMenu     cascade         "Graphics"           				   			 GraphMenu                   ""						""
 item    MAdMenu     cascade         "Other functions"      				   	   OtherMenu                   ""						""
-item    topMenu     cascade         "MAd"                                MAdMenu                      ""			        ""
 
 
 #== Calculate ES ==#  
@@ -78,7 +77,7 @@ item    orMenu		    command             "proportions to odds ratio"             
 #type    menu/item  operation/parent  label                              					command/menu                activation    			install?
 
 #menu    AggMenu		  MAdMenu     			""                                   				"" 			                 ""				   ""
-item    AggMenu	    command         "Meta-analysis aggregation"        		   	   	MetaGcmd 		        	 	 ""                "packageAvailable('MAd') && packageAvailable('plyr')"
+item    AggMenu	    command         "Meta-analysis aggregation"        		   	   	MetaGcmd 		        	 	 ""                "packageAvailable('MAd')"
 #item    MAdMenu     cascade         "Within-study aggregation"            		 		AggMenu                     	 ""					""
 
 
@@ -86,7 +85,7 @@ item    AggMenu	    command         "Meta-analysis aggregation"        		   	   
 
 #type    menu/item    operation/parent 		label                         					command/menu                activation    				install?
 
-#item    MAdMenu		  command         		"Omnibus analysis"        	  						OmnibusEScmd			          ""                     		"packageAvailable('MAd') && packageAvailable('plyr')"
+item    MAdMenu		  command         		"Omnibus analysis"        	  						OmnibusEScmd			          ""                     		"packageAvailable('MAd') "
 
 
 #== Moderator Analysis ==#
@@ -94,11 +93,11 @@ item    AggMenu	    command         "Meta-analysis aggregation"        		   	   
 #type    menu/item   	operation/parent  label                             		  	command/menu                activation  			  	install?
 
 #menu    ModMenu		 	  MAdMenu     			""                            		  			""                          ""						""
-item    ModMenu	     	command         "Categoical moderation"       							CatModcmd         			""                      "packageAvailable('MAd') && packageAvailable('plyr')"
-item    ModMenu     	command         "Direct comparison: cat mod"		 	  				CatCompcmd                 ""                      "packageAvailable('MAd') && packageAvailable('plyr')"
-item    ModMenu     	command         "Single predictor meta-regression"    	  	MAreg1cmd                   ""                      "packageAvailable('MAd') && packageAvailable('plyr')"
-item    ModMenu     	command         "Multiple predictor meta-regression"  	  	MAreg2cmd                   ""                      "packageAvailable('MAd') && packageAvailable('plyr')"
-#item    ModMenu     	command         "Meta-regression model fit"  	  						MRfitcmd                   ""                      "packageAvailable('MAd') && packageAvailable('plyr')"
+item    ModMenu	     	command         "Categoical moderation"       							CatModcmd         			""                      "packageAvailable('MAd') "
+item    ModMenu     	command         "Direct comparison: cat mod"		 	  				CatCompcmd                 ""                      "packageAvailable('MAd') "
+item    ModMenu     	command         "Single predictor meta-regression"    	  	MAreg1cmd                   ""                      "packageAvailable('MAd') "
+item    ModMenu     	command         "Multiple predictor meta-regression"  	  	MAreg2cmd                   ""                      "packageAvailable('MAd')"
+#item    ModMenu     	command         "Meta-regression model fit"  	  						MRfitcmd                   ""                      "packageAvailable('MAd')"
 #item    MAdMenu      	cascade         "Moderator analysis"                 		  	ModMenu                 	""						""
 
 
@@ -107,26 +106,26 @@ item    ModMenu     	command         "Multiple predictor meta-regression"  	  	M
 #type    menu/item      operation/parent  label                              		command/menu                activation   				 install?
 
 #menu 	GraphMenu		  MAdMenu     	""                                     		""                          ""						""
-item    GraphMenu	    command         "Categorical moderator graph"          		CatModGraphcmd       		""                      "packageAvailable('MAd') && packageAvailable('plyr') && packageAvailable('ggplot2')"
-item    GraphMenu	    command         "Forest plot"				           						ForestPlotcmd 				""                      "packageAvailable('MAd') && packageAvailable('plyr') && packageAvailable('ggplot2')"
-item    GraphMenu	    command         "Funnel plot"       				   						FunnelPlotcmd               ""                      "packageAvailable('MAd') && packageAvailable('ggplot2')"
-item    GraphMenu	    command         "Meta-regression graph"                		MAregGraphcmd               ""                      "packageAvailable('MAd') && packageAvailable('ggplot2')"
-item    GraphMenu     command         "Multiple predictor moderator graph"  	  MultiModGraphcmd            ""                      "packageAvailable('MAd') && packageAvailable('ggplot2')"
+item    GraphMenu	    command         "Categorical moderator graph"          		CatModGraphcmd       		""                      "packageAvailable('MAd') "
+item    GraphMenu	    command         "Forest plot"				           						ForestPlotcmd 				""                      "packageAvailable('MAd') "
+item    GraphMenu	    command         "Funnel plot"       				   						FunnelPlotcmd               ""                      "packageAvailable('MAd') "
+item    GraphMenu	    command         "Meta-regression graph"                		MAregGraphcmd               ""                      "packageAvailable('MAd') "
+item    GraphMenu     command         "Multiple predictor moderator graph"  	  MultiModGraphcmd            ""                      "packageAvailable('MAd') "
 #item    MAdMenu       cascade         "Graphics"           				   					  GraphMenu                   ""						""
 
 
 ##== Other ==##
 
-#menu 		OtherMenu			MAdMenu     	""                                    		 			""                         ""						""
-item    OtherMenu	    command         "Complete dataset"					       			  ComplDatacmd			 		 ""                "packageAvailable('plyr') && packageAvailable('ggplot2')"
-item    OtherMenu	    command         "Add weights to dataset"					        Wifuncmd			 		 ""                "packageAvailable('plyr') && packageAvailable('ggplot2')"
+#menu 	OtherMenu			MAdMenu     	  ""                                    		 			""                         ""						""
+item    OtherMenu	    command         "Complete dataset"					       			  ComplDatacmd			 		 ""                ""
+item    OtherMenu	    command         "Add weights to dataset"					        Wifuncmd			 		 ""                ""
+item    OtherMenu     command         "Convert to Categorical Variable"         factscmd						        ""          ""
 item    OtherMenu	    command         "Correction for attenuation"           		CorAttencmd         			""                  "packageAvailable('MAd')"
 item    OtherMenu     command         "Agreement: Kappa (cat data)"   	        Kappacmd                    ""                      "packageAvailable('MAd')"
 item    OtherMenu     command         "Publication Bias"						   	        PubBiascmd                    ""                      "packageAvailable('MAd')"
 #item    MAdMenu       cascade         "Other functions"      				   	   		  OtherMenu                   ""						""
 
       
-
 
 
 
