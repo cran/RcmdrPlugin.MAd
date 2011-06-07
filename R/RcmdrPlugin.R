@@ -14,6 +14,7 @@ Commander()
 }
 }
 
+
 #== New Functions (3.07.10) ==##
 
 # facts 3.18.10
@@ -26,8 +27,8 @@ factscmd <- function(){
   xBox <- variableListBox(variablesFrame, .variable, selectmode="multiple",
             title=gettextRcmdr("variable to convert to categorical (pick one)"))
   newDataSetName <- tclVar(gettextRcmdr("<same as active data set>"))
-	dataSetNameFrame <- tkframe(top)
-	dataSetNameEntry <- ttkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
+    dataSetNameFrame <- tkframe(top)
+    dataSetNameEntry <- ttkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
 	onOK <- function(){
 		newName <- trim.blanks(tclvalue(newDataSetName))
 		if (newName == gettextRcmdr("<same as active data set>")) newName <- ActiveDataSet()
@@ -1198,10 +1199,10 @@ r_to_dcmd <- function(){
     n1 <- paste(', ', n1, '', sep="")
            
     cor <- trim.blanks(tclvalue(corVar)) #prop 2
-    cor <- paste(', ', cor, '', sep="")
+    cor <- paste( ' ', cor, '', sep="")   # removed from after paste( : ',
     
       
-    doItAndPrint(paste("r_to_d(",cor, n1,")", sep="")) 
+    doItAndPrint(paste("r_to_d(", cor, n1,")", sep="")) 
     activateMenus()
     tkfocus(CommanderWindow())
   }
@@ -1545,12 +1546,24 @@ r_from_tcmd <- function(){
 
 ##==== Within-Study Aggregation
 
-# MetaG function
+# agg function
 
 MetaGcmd <- function(){
-  initializeDialog(title=gettextRcmdr("Meta-analysis aggregation"))
-  variablesFrame <- tkframe(top)
+  initializeDialog(title=gettextRcmdr("Within-study aggregation"))
   labelsFrame <- tkframe(top)
+  variablesFrame <- tkframe(top)
+  .variable <- Variables()
+  .numeric <- Numeric()
+  statFrame <- tkframe(labelsFrame)
+  
+  xBox <- variableListBox(variablesFrame, .variable, 
+                          title=gettextRcmdr("id variable (pick one)"))
+  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Effect size (ES) (pick one)"))
+  zBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("ES Variance (pick one)"))
+  aBox <- variableListBox(variablesFrame, .variable, 
+                          title=gettextRcmdr("Grp 1 N variable (pick one)"))
+  bBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Grp 2 N variable (pick one)"))
+ 
   UpdateModelNumber()
   statVar <- tclVar(gettextRcmdr(".50 "))  
   statFrame <- tkframe(labelsFrame)
@@ -1558,37 +1571,84 @@ MetaGcmd <- function(){
   tkgrid(labelRcmdr(statFrame, text=gettextRcmdr("estimated correlation btwn outcome measures"), fg="blue"), sticky="w")
   tkgrid(statEntry, sticky="w")
   tkgrid(statFrame, labelRcmdr(labelsFrame, text=" Default is .50  (Wampold, 1997)  "), sticky="w")
-  modelName <- tclVar(paste("aggdata.", getRcmdr("modelNumber"), sep=""))
+ 
+modelName <- tclVar(paste("ag.", getRcmdr("modelNumber"), sep=""))
   modelFrame <- tkframe(top)
   model <- ttkentry(modelFrame, width="20", textvariable=modelName)
-  subsetBox()
-  onOK <- function(){ 
-  closeDialog() 
-  modelValue <- trim.blanks(tclvalue(modelName))
-    if (!is.valid.name(modelValue)){
-      UpdateModelNumber(-1)
-      errorCondition(recall=MetaGcmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
-      return()
+  
+  onOK <- function(){
+    x <- getSelection(xBox)
+    y <- getSelection(yBox)
+    z <- getSelection(zBox)
+    a <- getSelection(xBox)
+    b <- getSelection(yBox)
+    closeDialog()
+      if (0 == length(x)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("You must select an id variable."))
+        return()
+    }
+      if (0 == length(a)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No  sample (n.1) variable selected."))
+        return()
+    }
+if (0 == length(b)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No sample (n.2) variable selected."))
+        return()
+    }
+if (0 == length(y)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("You must select a ES variable."))
+        return()
+    }
+      if (0 == length(z)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No  variance (var) variable selected."))
+        return()
+    }
+    
+    modelValue <- trim.blanks(tclvalue(modelName))
+      if (!is.valid.name(modelValue)){
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
+        return()
+    }
+      
+    #modelFR <- as.character(tclvalue(modelFRVariable)) 
+    stat <- trim.blanks(tclvalue(statVar))
+       stat <- paste (' ', stat, '', sep="")
+    command <- paste("agg(" , x, ", ", y,", ", z,", ", a,", ", b,", cor = ",stat," ,
+            data=", ActiveDataSet(), ")", sep="")
+    logger(paste(modelValue, " <- ", command, sep=""))
+    assign(modelValue, justDoIt(command), envir=.GlobalEnv)
+                 
   }
-  meta <- ActiveDataSet()
-  stat <- trim.blanks(tclvalue(statVar))
-  stat <- paste (' ', stat, '', sep="") 
-  command <- paste(paste("MetaG(", meta, ",  cor = ",stat,")", sep=""))
-  logger(paste(modelValue, " <- ", command, sep=""))
-  assign(modelValue, justDoIt(command), envir=.GlobalEnv)
-  doItAndPrint(modelValue)
-  tkfocus(CommanderWindow())
-  }
-  OKCancelHelp(helpSubject="MetaG", model=TRUE)
-  tkgrid(labelsFrame, sticky="w")
-  tkgrid(labelRcmdr(top, text=" "))
-  tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for data:")), model, sticky="w")
+  OKCancelHelp(helpSubject="agg", model=TRUE)
+    
+  #tkgrid(modelFRFrame, sticky="w")
+  tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for data.frame:")), model, sticky="w")
   tkgrid(modelFrame, sticky="w")
-  tkgrid.configure(helpButton, sticky="e")
+  tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="    "), getFrame(zBox),getFrame(xBox), 
+        getFrame(aBox),getFrame(bBox),sticky="nw")
   tkgrid(variablesFrame, sticky="w")
+  tkgrid(labelsFrame, sticky="w")
   tkgrid(buttonsFrame, stick="w")
-  dialogSuffix(rows=4, columns=2)
+  tkgrid.configure(helpButton, sticky="e")
+  dialogSuffix(rows=7, columns=7)
 }
+
+
+
+
+
+
+
+
+
+
+
 
 ComplDatacmd <- function(){
   initializeDialog(title=gettextRcmdr("Complete Dataset"))
@@ -1652,87 +1712,192 @@ ComplDatacmd <- function(){
 }
 
 ##==== Omnibus Analysis ====##
-    
+
+
 OmnibusEScmd <- function(){
   initializeDialog(title=gettextRcmdr("Omnibus Effect Size (Fixed and Random Effects)"))
   variablesFrame <- tkframe(top)
+  .variable <- Variables()
+  .numeric <- Numeric()
+  #xBox <- variableListBox(variablesFrame, .variable, selectmode="multiple",
+  #                        title=gettextRcmdr("Moderator (pick one or more)"))
+  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Effect size (ES) (pick one)"))
+  zBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("ES Variance (pick one)"))
+ 
   UpdateModelNumber()
-  modelName <- tclVar(paste("omnidata.", getRcmdr("modelNumber"), sep=""))
+  modelName <- tclVar(paste("omn.", getRcmdr("modelNumber"), sep=""))
   modelFrame <- tkframe(top)
   model <- ttkentry(modelFrame, width="20", textvariable=modelName)
   subsetBox()
-  onOK <- function(){ 
-    modelValue <- trim.blanks(tclvalue(modelName))
-    if (!is.valid.name(modelValue)){
-      UpdateModelNumber(-1)
-      errorCondition(recall=OmnibusEScmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
-      return()
+  onOK <- function(){
+   # x <- getSelection(xBox)
+    y <- getSelection(yBox)
+    z <- getSelection(zBox)
+    closeDialog()
+      if (0 == length(y)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=OmnibusEScmd, message=gettextRcmdr("You must select a response variable."))
+        return()
     }
-    closeDialog() 
-    meta <- ActiveDataSet()
-	modelN <- as.character(tclvalue(modelNVariable)) 
-    command <- paste(paste("OmnibusES(", meta, ", var= '",modelN,"')", sep=""))
+    #  if (0 == length(x)) {
+    #    UpdateModelNumber(-1)
+    #    errorCondition(recall=OmnibusEScmd, message=gettextRcmdr("No explanatory variables selected."))
+    #    return()
+    #}
+if (0 == length(z)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=OmnibusEScmd, message=gettextRcmdr("No variance variables selected."))
+        return()
+    }
+      if (is.element(y, z)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=OmnibusEScmd, message=gettextRcmdr("Response and explanatory variables must be         
+        different."))
+        return()
+    }
+    subset <- tclvalue(subsetVariable)
+      if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
+        subset <- ""
+        putRcmdr("modelWithSubset", FALSE)
+    }
+      else{
+        subset <- paste(", subset=", subset, sep="")
+        putRcmdr("modelWithSubset", TRUE)
+    }
+    modelValue <- trim.blanks(tclvalue(modelName))
+      if (!is.valid.name(modelValue)){
+        UpdateModelNumber(-1)
+        errorCondition(recall=OmnibusEScmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
+        return()
+    }
+      if (is.element(modelValue, listLinearModels())) {
+        if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
+          UpdateModelNumber(-1)
+          linearRegressionModel()
+          return()
+      }
+    }
+    modelFR <- as.character(tclvalue(modelFRVariable)) 
+    meta <-ActiveDataSet()     
+    command <- paste("mareg(", y, "~", " 1",
+                    ", var=", z,", data=", ActiveDataSet(), subset, ",method='",modelFR,"')", sep="")
     logger(paste(modelValue, " <- ", command, sep=""))
     assign(modelValue, justDoIt(command), envir=.GlobalEnv)
-    doItAndPrint(modelValue)
-    tkfocus(CommanderWindow())
+     command2 <- (paste("summary(", modelValue, ")"))
+    doItAndPrint(command2) 
+            
   }
-  OKCancelHelp(helpSubject="OmnibusES", model=TRUE)
-  radioButtons(name="modelN", buttons=c("Weighted", "Unweighted"), values=c("weighted", "unweighted"),   
-               labels=gettextRcmdr(c("Weighted", "Unweighted")), title=gettextRcmdr("Method"))
-  tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for data:")), model, sticky="w")
+  OKCancelHelp(helpSubject="omni", model=TRUE)
+  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
+               values=c("FE", "REML"),
+               labels=gettextRcmdr(c("FE", "REML")), 
+               title=gettextRcmdr("model"))   
+  tkgrid(modelFRFrame, sticky="w")
+  tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
   tkgrid(modelFrame, sticky="w")
-  tkgrid.configure(helpButton, sticky="e")
+  tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="    "), getFrame(zBox), sticky="nw")
   tkgrid(variablesFrame, sticky="w")
-  tkgrid(modelNFrame, sticky="w")
+  tkgrid(subsetFrame, sticky="w")
   tkgrid(buttonsFrame, stick="w")
-  dialogSuffix(rows=4, columns=2)
+  tkgrid.configure(helpButton, sticky="e")
+  dialogSuffix(rows=5, columns=1)
 }
 
 
 ##==== Moderator ====#
 
-# CatMod function
+# macat function
+
 
 CatModcmd <- function(){
-  initializeDialog(title=gettextRcmdr("Categorical Moderation"))
+  initializeDialog(title=gettextRcmdr("Categorical moderation (single predictor)"))
   variablesFrame <- tkframe(top)
+  .variable <- Variables()
+  .numeric <- Numeric()
+  .factor <- Factors()
+  xBox <- variableListBox(variablesFrame, .factor, 
+                          title=gettextRcmdr("Moderator (pick one)"))
+  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Effect size (ES) (pick one)"))
+  zBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("ES Variance (pick one)"))
+ 
   UpdateModelNumber()
-  modelName <- tclVar(paste("moddata.", getRcmdr("modelNumber"), sep=""))
+  modelName <- tclVar(paste("catmod.", getRcmdr("modelNumber"), sep=""))
   modelFrame <- tkframe(top)
   model <- ttkentry(modelFrame, width="20", textvariable=modelName)
   subsetBox()
-  .factor <- Factors()
-  xBox <- variableListBox(top, .factor, title=gettextRcmdr("moderator variables (pick one)"))
   onOK <- function(){
     x <- getSelection(xBox)
-    if (length(x) == 0){
-      errorCondition(recall=CatModcmd, message=gettextRcmdr("You must select one variable."))
-      return()
+    y <- getSelection(yBox)
+    z <- getSelection(zBox)
+    closeDialog()
+      if (0 == length(y)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=CatModcmd, message=gettextRcmdr("You must select an effect size variable."))
+        return()
+    }
+      if (0 == length(x)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=CatModcmd, message=gettextRcmdr("No moderator variables selected."))
+        return()
+    }
+if (0 == length(z)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=CatModcmd, message=gettextRcmdr("No variance variables selected."))
+        return()
+    }
+      if (is.element(y, x)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=CatModcmd, message=gettextRcmdr("Response and explanatory variables must be         
+        different."))
+        return()
+    }
+    subset <- tclvalue(subsetVariable)
+      if (trim.blanks(subset) == gettextRcmdr("<all valid cases>") || trim.blanks(subset) == ""){
+        subset <- ""
+        putRcmdr("modelWithSubset", FALSE)
+    }
+      else{
+        subset <- paste(", subset=", subset, sep="")
+        putRcmdr("modelWithSubset", TRUE)
     }
     modelValue <- trim.blanks(tclvalue(modelName))
-    if (!is.valid.name(modelValue)){
-      UpdateModelNumber(-1)
-      errorCondition(recall=CatModcmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
-      return()
-    }     
-    closeDialog()
-    meta <- ActiveDataSet()
-    command <- paste("CatMod(", meta, ",", meta, "$", x, ")", sep="")
+      if (!is.valid.name(modelValue)){
+        UpdateModelNumber(-1)
+        errorCondition(recall=CatModcmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
+        return()
+    }
+      if (is.element(modelValue, listLinearModels())) {
+        if ("no" == tclvalue(checkReplace(modelValue, type=gettextRcmdr("Model")))){
+          UpdateModelNumber(-1)
+          linearRegressionModel()
+          return()
+      }
+    }
+ 
+    modelFR <- as.character(tclvalue(modelFRVariable)) 
+    meta <-ActiveDataSet()     
+    command <- paste("macat(", y,",  var=", z,",  mod=", x,", data=", ActiveDataSet(), ",method='",modelFR,"')", sep="")
     logger(paste(modelValue, " <- ", command, sep=""))
-    assign(modelValue, justDoIt(command), envir=.GlobalEnv)
-    doItAndPrint(modelValue)
-    tkfocus(CommanderWindow())
+    assign(modelValue, doItAndPrint(command), envir=.GlobalEnv)
+                 
   }
-  OKCancelHelp(helpSubject="CatMod")
+  OKCancelHelp(helpSubject="macat", model=TRUE)
+  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
+               values=c("fixed", "random"),
+               labels=gettextRcmdr(c("fixed", "random")), 
+               title=gettextRcmdr("model"))   
+  tkgrid(modelFRFrame, sticky="w")
   tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
   tkgrid(modelFrame, sticky="w")
-  tkgrid(labelRcmdr(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
+  tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="    "), getFrame(zBox), getFrame(xBox), sticky="nw")
   tkgrid(variablesFrame, sticky="w")
+  tkgrid(subsetFrame, sticky="w")
   tkgrid(buttonsFrame, stick="w")
   tkgrid.configure(helpButton, sticky="e")
-  dialogSuffix(rows=4, columns=2)
+  dialogSuffix(rows=5, columns=1)
 }
+
+
 
 #CatComp
 
@@ -1740,15 +1905,21 @@ CatCompcmd <- function(){
   initializeDialog(title=gettextRcmdr("Direct Categorical Moderator Comparison"))
   variablesFrame <- tkframe(top)
   .factor <- Factors()
-  yBox <- variableListBox(variablesFrame, .factor, title=gettextRcmdr("moderator variable (pick one)"))
-  UpdateModelNumber()
+  .numeric <- Numeric()
+  xBox <- variableListBox(variablesFrame, .factor, title=gettextRcmdr("moderator variable (pick one)"))
+  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Effect size (ES) (pick one)"))
+  zBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("ES Variance (pick one)"))
+   
+UpdateModelNumber()
   modelName <- tclVar(paste("modcompdata.", getRcmdr("modelNumber"), sep=""))
   modelFrame <- tkframe(top)
   model <- ttkentry(modelFrame, width="20", textvariable=modelName)
   subsetBox()
   onOK <- function(){
+    x <- getSelection(xBox)
     y <- getSelection(yBox)
-    closeDialog()
+    z <- getSelection(zBox)  
+  closeDialog()
       if (0 == length(y)) {
         UpdateModelNumber(-1)
         errorCondition(recall=CatCompcmd, message=gettextRcmdr("You must select a moderator variable."))
@@ -1764,16 +1935,16 @@ CatCompcmd <- function(){
     modelN <- as.character(tclvalue(modelNVariable)) 
     modelC1 <- as.character(tclvalue(modelC1Variable)) 
     modelC2 <- as.character(tclvalue(modelC2Variable))
-    command <- paste("CatComp(", meta, ", ", paste(y, collapse=","),
-                     ", ",modelC1,", ",modelC2,", method= '",modelN,"')", sep="")
+    command <- paste("macatC(x1=",modelC1,", x2=",modelC2,", g=", y, ", var=", z, ",mod=", paste(x, collapse=","),
+                     ",  type= '",modelN,"', data=", ActiveDataSet(),")", sep="")
     logger(paste(modelValue, " <- ", command, sep=""))
     assign(modelValue, justDoIt(command), envir=.GlobalEnv)
     doItAndPrint(modelValue)
     tkfocus(CommanderWindow())
   }
   OKCancelHelp(helpSubject="CatComp", model=TRUE)
-  radioButtons(name="modelN", buttons=c("post.hoc1", "post.hoc2","planned"), values=c("post.hoc1", "post.hoc2","planned"),   
-               labels=gettextRcmdr(c("post.hoc: HSD", "post.hoc: Scheffe", "planned")), title=gettextRcmdr("method"))
+  radioButtons(name="modelN", buttons=c("post.hoc", "planned"), values=c("post.hoc", "planned"),   
+               labels=gettextRcmdr(c("post.hoc", "planned")), title=gettextRcmdr("method"))
   radioButtons(name="modelC1", buttons=c("one", "two", "three","four", "five","six"), 
                values=c("1", "2", "3","4", "5","6"),   
                labels=gettextRcmdr(c("one", "two", "three","four", "five","six")),
@@ -1784,7 +1955,7 @@ CatCompcmd <- function(){
                title=gettextRcmdr("choose 2nd levels of factor to compare"))    
   tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
   tkgrid(modelFrame, sticky="w")
-  tkgrid(labelRcmdr(variablesFrame, text="    "), getFrame(yBox), sticky="nw")
+  tkgrid(labelRcmdr(variablesFrame, text="    "), getFrame(xBox), getFrame(yBox),getFrame(zBox),sticky="nw")
   tkgrid(modelNFrame, sticky="w")
   tkgrid(modelC1Frame, sticky="w")
   tkgrid(modelC2Frame, sticky="w")
@@ -1796,74 +1967,28 @@ CatCompcmd <- function(){
   dialogSuffix(rows=4, columns=2)
 }
 
-#MAreg1
 
-MAreg1cmd <- function(){
-  initializeDialog(title=gettextRcmdr("Single Predictor Meta-Regression"))
-  variablesFrame <- tkframe(top)
-  .numeric <- Numeric()
-  .variables <- Variables()
-  xBox <- variableListBox(variablesFrame, .variables, title=gettextRcmdr("moderator variables (pick one)"))
-  UpdateModelNumber()
-  modelName <- tclVar(paste("MAmodel.", getRcmdr("modelNumber"), sep=""))
-  modelFrame <- tkframe(top)
-  model <- ttkentry(modelFrame, width="20", textvariable=modelName)
-  subsetBox()
-  onOK <- function(){
-    x <- getSelection(xBox)
-    closeDialog()
-      if (0 == length(x)) {
-        UpdateModelNumber(-1)
-        errorCondition(recall=MAreg1cmd, message=gettextRcmdr("No moderator variable selected."))
-        return()
-    }
-    modelValue <- trim.blanks(tclvalue(modelName))
-      if (!is.valid.name(modelValue)){
-        UpdateModelNumber(-1)
-        errorCondition(recall=MAreg1cmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
-        return()
-    }
-    modelFR <- as.character(tclvalue(modelFRVariable))    
-    meta <- ActiveDataSet()     
-    command <- (paste("MAreg1(", meta, ",",meta, "$", x, ",  method='" ,modelFR, "')", sep=""))
-    logger(paste(modelValue, " <- ", command, sep=""))
-    assign(modelValue, justDoIt(command), envir=.GlobalEnv)       
-    doItAndPrint(modelValue)
-    tkfocus(CommanderWindow())
-  }    
-  OKCancelHelp(helpSubject="MAreg1", model=TRUE)
-  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
-               values=c("fixed", "random"),
-               labels=gettextRcmdr(c("fixed", "random")), 
-               title=gettextRcmdr("Model"))
-  tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
-  tkgrid(modelFrame, sticky="w")
-  tkgrid(labelRcmdr(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
-  tkgrid(modelFRFrame, sticky="w")
-  tkgrid(variablesFrame, sticky="w")
-  tkgrid(buttonsFrame, stick="w")
-  tkgrid.configure(helpButton, sticky="e")
-  dialogSuffix(rows=4, columns=1)
-}
-
-#MAreg2  
+#mareg  
 
 MAreg2cmd <- function(){
-  initializeDialog(title=gettextRcmdr("Multiple Predictor Meta-Regression"))
+  initializeDialog(title=gettextRcmdr("Meta-Regression"))
   variablesFrame <- tkframe(top)
   .variable <- Variables()
   .numeric <- Numeric()
   xBox <- variableListBox(variablesFrame, .variable, selectmode="multiple",
-                          title=gettextRcmdr("Moderator variables (pick one or more)"))
-  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Response variable (pick one)"))
+                          title=gettextRcmdr("Moderator (pick one or more)"))
+  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Effect size (ES) (pick one)"))
+  zBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("ES Variance (pick one)"))
+ 
   UpdateModelNumber()
-  modelName <- tclVar(paste("MARegModel.", getRcmdr("modelNumber"), sep=""))
+  modelName <- tclVar(paste("mr.", getRcmdr("modelNumber"), sep=""))
   modelFrame <- tkframe(top)
   model <- ttkentry(modelFrame, width="20", textvariable=modelName)
   subsetBox()
   onOK <- function(){
     x <- getSelection(xBox)
     y <- getSelection(yBox)
+    z <- getSelection(zBox)
     closeDialog()
       if (0 == length(y)) {
         UpdateModelNumber(-1)
@@ -1875,9 +2000,15 @@ MAreg2cmd <- function(){
         errorCondition(recall=MAreg2cmd, message=gettextRcmdr("No explanatory variables selected."))
         return()
     }
+if (0 == length(z)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MAreg2cmd, message=gettextRcmdr("No variance variables selected."))
+        return()
+    }
       if (is.element(y, x)) {
         UpdateModelNumber(-1)
-        errorCondition(recall=MAreg2cmd, message=gettextRcmdr("Response and explanatory variables must be different."))
+        errorCondition(recall=MAreg2cmd, message=gettextRcmdr("Response and explanatory variables must be         
+        different."))
         return()
     }
     subset <- tclvalue(subsetVariable)
@@ -1904,43 +2035,31 @@ MAreg2cmd <- function(){
     }
     modelFR <- as.character(tclvalue(modelFRVariable)) 
     meta <-ActiveDataSet()     
-    command <- paste("lm(", y, "~", paste(x, collapse="+"),
-                     ", data=", ActiveDataSet(), subset, ", 
-                     weights=",meta, "$",modelFR,")", sep="")
+    command <- paste("mareg(", y, "~", paste(x, collapse="+"),
+                    ", var=", z,", data=", ActiveDataSet(), subset, ",method='",modelFR,"')", sep="")
     logger(paste(modelValue, " <- ", command, sep=""))
     assign(modelValue, justDoIt(command), envir=.GlobalEnv)
-    reg <- modelValue           
-	  command2 <- (paste("MAreg2(", reg, ")"))
-    logger(paste(modelValue, " <- ", command2, sep=""))
-    assign(modelValue, justDoIt(command2), envir=.GlobalEnv)       
-    doItAndPrint(modelValue)
-    
-    emptyModel <- paste("lm(", y, "~", 1,
-                     ", data=", ActiveDataSet(), subset, ", 
-                   weights=",meta, "$",modelFR,")", sep="")
-    Model1 <- paste("lm(", y, "~", paste(x, collapse="+"),
-                     ", data=", ActiveDataSet(), subset, ", 
-                     weights=",meta, "$",modelFR,")", sep="")
-                   
-    command4 <- (paste("MRfit(", emptyModel ,"," ,Model1, ")"))
-    doItAndPrint(command4)
-    
+     command2 <- (paste("summary(", modelValue, ")"))
+    doItAndPrint(command2) 
+            
   }
-  OKCancelHelp(helpSubject="MAreg2", model=TRUE)
+  OKCancelHelp(helpSubject="mareg", model=TRUE)
   radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
-               values=c("wi", "wi.tau"),
-               labels=gettextRcmdr(c("fixed", "random")), 
+               values=c("FE", "REML"),
+               labels=gettextRcmdr(c("FE", "REML")), 
                title=gettextRcmdr("model"))   
   tkgrid(modelFRFrame, sticky="w")
   tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for model:")), model, sticky="w")
   tkgrid(modelFrame, sticky="w")
-  tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="    "), getFrame(xBox), sticky="nw")
+  tkgrid(getFrame(yBox), labelRcmdr(variablesFrame, text="    "), getFrame(zBox),getFrame(xBox), sticky="nw")
   tkgrid(variablesFrame, sticky="w")
   tkgrid(subsetFrame, sticky="w")
   tkgrid(buttonsFrame, stick="w")
   tkgrid.configure(helpButton, sticky="e")
-  dialogSuffix(rows=4, columns=1)
+  dialogSuffix(rows=5, columns=1)
 }
+
+
 
 ##==== Graphics ====##
 
@@ -2282,4 +2401,15 @@ Kappacmd <- function(){
   tkgrid(variablesFrame, sticky="w")
   dialogSuffix(rows=8, columns=2)
 }
+
+
+
+
+
+
+
+
+
+
+
 

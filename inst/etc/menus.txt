@@ -1,7 +1,10 @@
+
+
+
 # Rcmdr menus for the MAd package
 # When the plug-in is loaded, these menus are merged with the standard Rcmdr menus 
 
-# last modified: 03.13.2010 by AC Del Re
+# last modified: 06.07.2011 by AC Del Re
 
 ##===================== MAIN MAd MENU ========================##
 
@@ -20,7 +23,7 @@ menu 		OtherMenu		MAdMenu     	""                                    		 			""   
  
 item    topMenu     cascade         "MAd"                                MAdMenu                      ""			        ""
 item    MAdMenu 		cascade         "Calculate Effect Sizes"             CalcESMenu                   	 ""				    ""
-item    MAdMenu     cascade         "Within-study aggregation"           AggMenu                     	 ""					""
+#item    MAdMenu     cascade         "Within-study aggregation"           AggMenu                     	 ""					""
 item    MAdMenu     cascade         "Moderator analysis"                 ModMenu                 	""						""
 item    MAdMenu     cascade         "Graphics"           				   			 GraphMenu                   ""						""
 item    MAdMenu     cascade         "Other functions"      				   	   OtherMenu                   ""						""
@@ -54,8 +57,8 @@ item     mnMenu	    command       	    "raw means and SDs to d"               me
 item     mnMenu	    command             "means with pooled SD to d"            mean_to_d2cmd                  ""                      "packageAvailable('MAd')"
 item     mnMenu	    command             "one-tailed p-value (ANCOVA) to d"     p.ancova_to_d1cmd                   ""                      "packageAvailable('MAd')"
 item     mnMenu	    command       	    "two-tailed p-value (ANCOVA) to d"     p.ancova_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
-item     mnMenu	    command             "one-tailed p-value to d"     				 p_to_d2cmd                   ""                      "packageAvailable('MAd')"
-item     mnMenu	    command       	    "two-tailed p-value to d"     				 p_to_d1cmd				 	 				""                      "packageAvailable('MAd')"
+item     mnMenu	    command             "one-tailed p-value to d"     				 p_to_d1cmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "two-tailed p-value to d"     				 p_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
 item     mnMenu	    command             "t-test to d"    									     t_to_dcmd                  ""                      "packageAvailable('MAd')"
 item     mnMenu	    command             "t-test (ANCOVA) to d"                 tt.ancova_to_dcmd                   ""                      "packageAvailable('MAd')"
 item     mnMenu	    command       	    "r from d (n of both grps same)"       r_from_dcmd				 	 			""              "packageAvailable('MAd')"
@@ -77,7 +80,7 @@ item    orMenu		    command             "proportions to odds ratio"             
 #type    menu/item  operation/parent  label                              					command/menu                activation    			install?
 
 #menu    AggMenu		  MAdMenu     			""                                   				"" 			                 ""				   ""
-item    AggMenu	    command         "Meta-analysis aggregation"        		   	   	MetaGcmd 		        	 	 ""                "packageAvailable('MAd')"
+item    AggMenu	    command         "Aggrege effect sizes"        		   	   	MetaGcmd 		        	 	 ""                "packageAvailable('MAd')"
 #item    MAdMenu     cascade         "Within-study aggregation"            		 		AggMenu                     	 ""					""
 
 
@@ -95,8 +98,8 @@ item    MAdMenu		  command         		"Omnibus analysis"        	  						OmnibusE
 #menu    ModMenu		 	  MAdMenu     			""                            		  			""                          ""						""
 item    ModMenu	     	command         "Categoical moderation"       							CatModcmd         			""                      "packageAvailable('MAd') "
 item    ModMenu     	command         "Direct comparison: cat mod"		 	  				CatCompcmd                 ""                      "packageAvailable('MAd') "
-item    ModMenu     	command         "Single predictor meta-regression"    	  	MAreg1cmd                   ""                      "packageAvailable('MAd') "
-item    ModMenu     	command         "Multiple predictor meta-regression"  	  	MAreg2cmd                   ""                      "packageAvailable('MAd')"
+#item    ModMenu     	command         "Single predictor meta-regression"    	  	MAreg1cmd                   ""                      "packageAvailable('MAd') "
+item    ModMenu     	command         "Meta-regression"  	  	MAreg2cmd                   ""                      "packageAvailable('MAd')"
 #item    ModMenu     	command         "Meta-regression model fit"  	  						MRfitcmd                   ""                      "packageAvailable('MAd')"
 #item    MAdMenu      	cascade         "Moderator analysis"                 		  	ModMenu                 	""						""
 
@@ -126,6 +129,3 @@ item    OtherMenu     command         "Publication Bias"						   	        PubBia
 #item    MAdMenu       cascade         "Other functions"      				   	   		  OtherMenu                   ""						""
 
       
-
-
-
