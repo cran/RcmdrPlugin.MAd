@@ -7,8 +7,8 @@
 \tabular{ll}{
 Package: \tab RcmdrPlugin.MAd-package\cr
 Type: \tab Package\cr
-Version: \tab 0.4\cr
-Date: \tab 2010-03-19\cr
+Version: \tab 0.6.1\cr
+Date: \tab 2011-06-19\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
@@ -18,32 +18,21 @@ LazyLoad: \tab yes\cr
 
 Maintainer: AC Del Re <acdelre@gmail.com>
 }
-\references{ AC Del Re & William T. Hoyt (2010). \emph{MAd: Meta-Analysis with Mean Differences}. R package version 0.3.
+\references{ AC Del Re (2010). \emph{MAd: Meta-Analysis with Mean Differences}. R package version 0.6.
   http://CRAN.R-project.org/package=MAd
  
 }
 \examples{
 # Implementing the RcmdrPlugin.MAd package:
 
-# 1.  Begin the meta-analysis project using Excel (or a similar program) and be sure 
-#     to have a column for id (study id), m.1 (post-test mean for treatment group), 
-#     n.1 (treatment sample size), sd.1 (treatment standard deviation), m.2 (post-test 
-#     mean for control/comparison group), n.2 (control/comparison sample size), 
-#     sd.2 (control/comparison standard deviation), and all moderators. Alternatively, 
-#     having columns for d and/or g (standardized mean difference), var.d and/or var.g 
-#     (variance of standardized mean difference), n.1 (treatment sample size), n.2 
-#     (control/comparison sample size). All other variables (i.e., moderators) 
-#     can be named to ones liking and should be integrated in the same dataset.
-#     Note: this package requires the names of the required variables to be named 
-#     exactly as stated above or the functions will not output data. 
+# 1.  Consider beginning the meta-analysis project using Excel (or a similar program).
 # 2.  Import the worksheet or data into R:
-# 2a. Save main data file (excel or spss) to a .csv file (e.g., see save options in
-#     Excel)
+# 2a. Save main data file (spreadsheet) to a .csv file 
 # 2b. Import the .csv data file using setwd() into R by setting the R working 
 #     directory to the location of your .csv data file. e.g., at the R command prompt
 #     type: setwd("C:/Users/Desktop/R")
 #     Or, if preferred, use the R menu: File --> Change Dir --> (location of .csv file) 
-# 2c. Then, use a similar command to import the data:
+# 2c. Then, use a similar command to import the data, e.g.:
 #     mydata <- read.csv("MetaData.csv", header=TRUE,na.strings="") 
 #     Where 'mydata' is the name of the 'object' that the data file will be saved as,
 #     which can be recalled by typing the name of the object and hitting return. This 

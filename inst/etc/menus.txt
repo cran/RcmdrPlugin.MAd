@@ -1,6 +1,4 @@
 
-
-
 # Rcmdr menus for the MAd package
 # When the plug-in is loaded, these menus are merged with the standard Rcmdr menus 
 
@@ -8,7 +6,7 @@
 
 ##===================== MAIN MAd MENU ========================##
 
-#type    menu/item      operation/parent    label                              command/menu                activation    			install?
+#type    menu/item      operation/parent    label                              command/menu                activation            	install?
 
 #menu    MAdMenu	        topMenu     		""                                   	 ""                           ""				    ""
 #item    topMenu         cascade         	"MAd"                                MAdMenu                      ""			        ""
@@ -23,7 +21,7 @@ menu 		OtherMenu		MAdMenu     	""                                    		 			""   
  
 item    topMenu     cascade         "MAd"                                MAdMenu                      ""			        ""
 item    MAdMenu 		cascade         "Calculate Effect Sizes"             CalcESMenu                   	 ""				    ""
-#item    MAdMenu     cascade         "Within-study aggregation"           AggMenu                     	 ""					""
+item    MAdMenu     cascade         "Within-study aggregation"           AggMenu                     	 ""					""
 item    MAdMenu     cascade         "Moderator analysis"                 ModMenu                 	""						""
 item    MAdMenu     cascade         "Graphics"           				   			 GraphMenu                   ""						""
 item    MAdMenu     cascade         "Other functions"      				   	   OtherMenu                   ""						""
@@ -45,9 +43,9 @@ item    corMenu	      command             "r to d"						                   r_to_
 # Mean Differences
 menu     mnMenu		  CalcESMenu          ""																				""							 						""						 					""
 item     CalcESMenu	cascade             "Mean Differences"        		  	   	 mnMenu 		        				 ""                      ""
-item     mnMenu	    command       	    "Automated mean differences (d & g)"   MeanDiffcmd				 	 				""                      "packageAvailable('MAd')"
-item     mnMenu	    command             "Automated mean differences (d)"       MeanDiffdcmd                  ""                      "packageAvailable('MAd')"
-item     mnMenu	    command             "Automated mean differences (g)"       MeanDiffgcmd                   ""                      "packageAvailable('MAd')"
+item     mnMenu	    command       	    "Vector of mean differences (d & g)"   MeanDiffgcmd				 	 				""                      "packageAvailable('MAd')"
+#item     mnMenu	    command             "Automated mean differences (d)"       MeanDiffdcmd                  ""                      "packageAvailable('MAd')"
+#item     mnMenu	    command             "Automated mean differences (g)"       MeanDiffgcmd                   ""                      "packageAvailable('MAd')"
 item     mnMenu	    command         	  "ancova to d (adj SD)" 				     	 ancova_to_d1cmd     		     		""                      "packageAvailable('MAd')"
 item     mnMenu	    command       	    "ancova to d (pooled SD)"				       ancova_to_d2cmd				 	 				""                      "packageAvailable('MAd')"
 item     mnMenu	    command             "d to unbiased g"       							 d_to_gcmd                  ""                      "packageAvailable('MAd')"
@@ -80,7 +78,7 @@ item    orMenu		    command             "proportions to odds ratio"             
 #type    menu/item  operation/parent  label                              					command/menu                activation    			install?
 
 #menu    AggMenu		  MAdMenu     			""                                   				"" 			                 ""				   ""
-item    AggMenu	    command         "Aggrege effect sizes"        		   	   	MetaGcmd 		        	 	 ""                "packageAvailable('MAd')"
+item    AggMenu	    command         "Aggregate effect sizes"        		   	   	MetaGcmd 		        	 	 ""                "packageAvailable('MAd')"
 #item    MAdMenu     cascade         "Within-study aggregation"            		 		AggMenu                     	 ""					""
 
 
@@ -128,4 +126,4 @@ item    OtherMenu     command         "Agreement: Kappa (cat data)"   	        K
 item    OtherMenu     command         "Publication Bias"						   	        PubBiascmd                    ""                      "packageAvailable('MAd')"
 #item    MAdMenu       cascade         "Other functions"      				   	   		  OtherMenu                   ""						""
 
-      
+ 

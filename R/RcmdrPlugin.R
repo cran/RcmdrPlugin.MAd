@@ -1,3 +1,4 @@
+
 ##== R-Commander Plug-in for Meta-Analysis with Mean Differences (MAd) ==##
 
 .packageName <- "RcmdrPlugin.MAd"
@@ -29,8 +30,8 @@ factscmd <- function(){
   newDataSetName <- tclVar(gettextRcmdr("<same as active data set>"))
     dataSetNameFrame <- tkframe(top)
     dataSetNameEntry <- ttkentry(dataSetNameFrame, width="25", textvariable=newDataSetName)
-	onOK <- function(){
-		newName <- trim.blanks(tclvalue(newDataSetName))
+    onOK <- function(){
+    	newName <- trim.blanks(tclvalue(newDataSetName))
 		if (newName == gettextRcmdr("<same as active data set>")) newName <- ActiveDataSet()
 		if (!is.valid.name(newName)){
 			errorCondition(recall=factscmd,
@@ -725,7 +726,7 @@ MeanDiffdcmd <- function(){
 # mean diff (g)
 
 MeanDiffgcmd <- function(){
-  initializeDialog(title=gettextRcmdr("Automated mean differences (d)"))
+  initializeDialog(title=gettextRcmdr("Automated mean differences (g)"))
   variablesFrame <- tkframe(top)
   UpdateModelNumber()
   modelName <- tclVar(paste("meandiff.", getRcmdr("modelNumber"), sep=""))
@@ -760,7 +761,104 @@ MeanDiffgcmd <- function(){
   dialogSuffix(rows=4, columns=2)
 }  
   
-
+MeanDiffgcmd <- function(){
+  initializeDialog(title=gettextRcmdr("Automated mean differences (g)"))
+  labelsFrame <- tkframe(top)
+  variablesFrame <- tkframe(top)
+  .variable <- Variables()
+  .numeric <- Numeric()
+  statFrame <- tkframe(labelsFrame)
+  
+  xBox <- variableListBox(variablesFrame, .variable, 
+                          title=gettextRcmdr("Grp 1 N variable (pick one)"))
+  yBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Grp 1 post-mean value (pick one)"))
+  zBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Grp 1 std. deviation of mean value (pick one)"))
+  aBox <- variableListBox(variablesFrame, .variable, 
+                          title=gettextRcmdr("Grp 2 N variable (pick one)"))
+  bBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Grp 2 post-mean value (pick one)"))
+  cBox <- variableListBox(variablesFrame, .numeric, title=gettextRcmdr("Grp 2 std. deviation of mean value (pick one)"))
+ 
+  UpdateModelNumber()
+  #statVar <- tclVar(gettextRcmdr(".50 "))  
+  #statFrame <- tkframe(labelsFrame)
+  #statEntry <- ttkentry(statFrame, width="5", textvariable=statVar)
+  #tkgrid(labelRcmdr(statFrame, text=gettextRcmdr("estimated correlation btwn outcome measures"), fg="blue"), sticky="w")
+  #tkgrid(statEntry, sticky="w")
+  #tkgrid(statFrame, labelRcmdr(labelsFrame, text=" Default is .50  (Wampold, 1997)  "), sticky="w")
+ 
+modelName <- tclVar(paste("dat.", getRcmdr("modelNumber"), sep=""))
+  modelFrame <- tkframe(top)
+  model <- ttkentry(modelFrame, width="20", textvariable=modelName)
+  
+  onOK <- function(){
+    x <- getSelection(xBox)
+    y <- getSelection(yBox)
+    z <- getSelection(zBox)
+    a <- getSelection(aBox)
+    b <- getSelection(bBox)
+    c <- getSelection(cBox)
+    closeDialog()
+      if (0 == length(x)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No  sample (n.1) variable selected."))
+        return()
+    }
+      if (0 == length(y)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No  post mean (m.1) variable selected."))
+        return()
+    }
+if (0 == length(z)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No sd (sd.1) variable selected."))
+        return()
+    }
+if (0 == length(a)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No  sample (n.2) variable selected."))
+        return()
+    }
+      if (0 == length(b)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No  post mean (m.2) variable selected."))
+        return()
+    }
+    if (0 == length(c)) {
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=gettextRcmdr("No sd (sd.2) variable selected."))
+        return()
+    }
+    modelValue <- trim.blanks(tclvalue(modelName))
+      if (!is.valid.name(modelValue)){
+        UpdateModelNumber(-1)
+        errorCondition(recall=MetaGcmd, message=sprintf(gettextRcmdr('"%s" is not a valid name.'), modelValue))
+        return()
+    }
+     modelN <- as.character(tclvalue(modelNVariable)) 
+    #modelFR <- as.character(tclvalue(modelFRVariable)) 
+    #stat <- trim.blanks(tclvalue(statVar))
+       #stat <- paste (' ', stat, '', sep="")
+    command <- paste("compute_dgs(" , x, ", ", y,", ", z,", ", a,", ", b,", ", c,",
+             denom= '",modelN,"', data=", ActiveDataSet(), ")", sep="")
+    logger(paste(modelValue, " <- ", command, sep=""))
+    assign(modelValue, justDoIt(command), envir=.GlobalEnv)
+                 
+  }
+  OKCancelHelp(helpSubject="compute_dgs", model=TRUE)
+  radioButtons(name="modelN", buttons=c("pooled.sd", "control.sd"), values=c("pooled.sd", "control.sd"),   
+               labels=gettextRcmdr(c("pooled.sd", "control.sd")), title=gettextRcmdr("demoninator:"))  
+  #tkgrid(modelFRFrame, sticky="w")
+  tkgrid(modelNFrame, sticky="w")
+  tkgrid(labelRcmdr(modelFrame, text=gettextRcmdr("Enter name for data.frame:")), model, sticky="w")
+  tkgrid(modelFrame, sticky="w")
+  tkgrid(getFrame(xBox), labelRcmdr(variablesFrame, text="    "), getFrame(yBox),getFrame(zBox), 
+        getFrame(aBox),getFrame(bBox),getFrame(cBox),sticky="nw")
+  tkgrid(variablesFrame, sticky="w")
+  tkgrid(labelsFrame, sticky="w")
+  tkgrid(buttonsFrame, stick="w")
+  tkgrid.configure(helpButton, sticky="e")
+  dialogSuffix(rows=7, columns=7)
+}
 
 # p ancova to d
 
@@ -2067,82 +2165,129 @@ if (0 == length(z)) {
 
 ForestPlotcmd <- function(){
   initializeDialog(title=gettextRcmdr("Forest Plot"))
-  variablesFrame <- tkframe(top)
-  UpdateModelNumber()
-  modelName <- tclVar(paste("ForestPlotGraph.", getRcmdr("modelNumber"), sep=""))
   labelsFrame <- tkframe(top)
-  titleVar <- tclVar(gettextRcmdr("<auto>"))
-  #ylabVar <- tclVar(gettextRcmdr("<auto>"))
-  titleFrame <- tkframe(labelsFrame)
-  titleEntry <- ttkentry(titleFrame, width="25", textvariable=titleVar)
-  titleScroll <- ttkscrollbar(titleFrame, orient="horizontal",
-  command=function(...) tkxview(titleEntry, ...))
-  tkconfigure(titleEntry, xscrollcommand=function(...) tkset(titleScroll, ...))
-  tkgrid(labelRcmdr(titleFrame, text=gettextRcmdr("title"), fg="blue"), sticky="w")
-  tkgrid(titleEntry, sticky="w")
-  tkgrid(titleScroll, sticky="ew")
-  tkgrid(titleFrame, labelRcmdr(labelsFrame, text="     "), sticky="w")
-  onOK <- function(){
+   statVar <- tclVar(gettextRcmdr(" "))  
+   statFrame <- tkframe(labelsFrame)
+   statEntry <- ttkentry(statFrame, width="25", textvariable=statVar)
+   tkgrid(labelRcmdr(statFrame, text=gettextRcmdr("Type name of model to plot"), fg="blue"), sticky="w")
+   tkgrid(statEntry, sticky="w")
+   tkgrid(statFrame, labelRcmdr(labelsFrame, text=" (Should be name of existing model object)  "), sticky="w")
+    onOK <- function(){
     closeDialog()
-    .activeDataSet <- ActiveDataSet()
-    title <- trim.blanks(tclvalue(titleVar))
-    title <- if(title == gettextRcmdr("<auto>")) "" else paste(', title="', title, '"', sep="")
-    modelFR <- as.character(tclvalue(modelFRVariable)) 
-    doItAndPrint(paste("ForestPlot(", .activeDataSet, ",  method='" ,modelFR, "'",title,")", sep="")) 
-    activateMenus()
-    tkfocus(CommanderWindow())
-  }
-  OKCancelHelp(helpSubject="ForestPlot")
-  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
-               values=c("fixed", "random"),
-               labels=gettextRcmdr(c("fixed", "random")), 
-               title=gettextRcmdr("Model"))
-  tkgrid(modelFRFrame, sticky="w")
-  tkgrid(labelsFrame, sticky="w")
-  tkgrid(labelRcmdr(top, text=" "))
-  tkgrid(buttonsFrame, columnspan=2, sticky="w")
-  dialogSuffix(rows=8, columns=2)
+    stat <- trim.blanks(tclvalue(statVar))
+       stat <- paste (' ', stat, '', sep="") 
+    doItAndPrint(paste("forest(", stat, " )", sep=""))
+    }
+    OKCancelHelp(helpSubject="forest", model=TRUE)
+    
+    tkgrid(labelsFrame, sticky="w") 
+    tkgrid.configure(helpButton, sticky="e")
+    tkgrid(buttonsFrame, stick="w")
+    dialogSuffix(rows=5, columns=3)
 }
+
+
+#ForestPlotcmd <- function(){
+#  initializeDialog(title=gettextRcmdr("Forest Plot"))
+#  variablesFrame <- tkframe(top)
+#  UpdateModelNumber()
+#  modelName <- tclVar(paste("ForestPlotGraph.", getRcmdr("modelNumber"), sep=""))
+#  labelsFrame <- tkframe(top)
+#  titleVar <- tclVar(gettextRcmdr("<auto>"))
+#  #ylabVar <- tclVar(gettextRcmdr("<auto>"))
+#  titleFrame <- tkframe(labelsFrame)
+#  titleEntry <- ttkentry(titleFrame, width="25", textvariable=titleVar)
+#  titleScroll <- ttkscrollbar(titleFrame, orient="horizontal",
+#  command=function(...) tkxview(titleEntry, ...))
+#  tkconfigure(titleEntry, xscrollcommand=function(...) tkset(titleScroll, ...))
+#  tkgrid(labelRcmdr(titleFrame, text=gettextRcmdr("title"), fg="blue"), sticky="w")
+#  tkgrid(titleEntry, sticky="w")
+#  tkgrid(titleScroll, sticky="ew")
+#  tkgrid(titleFrame, labelRcmdr(labelsFrame, text="     "), sticky="w")
+#  onOK <- function(){
+#    closeDialog()
+#    .activeDataSet <- ActiveDataSet()
+#    title <- trim.blanks(tclvalue(titleVar))
+#    title <- if(title == gettextRcmdr("<auto>")) "" else paste(', title="', title, '"', sep="")
+#    modelFR <- as.character(tclvalue(modelFRVariable)) 
+#    doItAndPrint(paste("ForestPlot(", .activeDataSet, ",  method='" ,modelFR, "'",title,")", sep="")) 
+#    activateMenus()
+#    tkfocus(CommanderWindow())
+#  }
+#  OKCancelHelp(helpSubject="ForestPlot")
+#  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
+#               values=c("fixed", "random"),
+#               labels=gettextRcmdr(c("fixed", "random")), 
+#               title=gettextRcmdr("Model"))
+#  tkgrid(modelFRFrame, sticky="w")
+#  tkgrid(labelsFrame, sticky="w")
+#  tkgrid(labelRcmdr(top, text=" "))
+#  tkgrid(buttonsFrame, columnspan=2, sticky="w")
+#  dialogSuffix(rows=8, columns=2)
+#}
 
 
 #Funnel Plot
 
-
 FunnelPlotcmd <- function(){
   initializeDialog(title=gettextRcmdr("Funnel Plot"))
-  variablesFrame <- tkframe(top)
-  UpdateModelNumber()
-  modelName <- tclVar(paste("FunnelGraph.", getRcmdr("modelNumber"), sep=""))
   labelsFrame <- tkframe(top)
-  titleVar <- tclVar(gettextRcmdr("<auto>"))
-  titleFrame <- tkframe(labelsFrame)
-  titleEntry <- ttkentry(titleFrame, width="25", textvariable=titleVar)
-  titleScroll <- ttkscrollbar(titleFrame, orient="horizontal",
-  command=function(...) tkxview(titleEntry, ...))
-  tkconfigure(titleEntry, xscrollcommand=function(...) tkset(titleScroll, ...))
-  tkgrid(labelRcmdr(titleFrame, text=gettextRcmdr("title"), fg="blue"), sticky="w")
-  tkgrid(titleEntry, sticky="w")
-  tkgrid(titleScroll, sticky="ew")
-  tkgrid(titleFrame, labelRcmdr(labelsFrame, text="     "), sticky="w")
-  onOK <- function(){
+   statVar <- tclVar(gettextRcmdr(" "))  
+   statFrame <- tkframe(labelsFrame)
+   statEntry <- ttkentry(statFrame, width="25", textvariable=statVar)
+   tkgrid(labelRcmdr(statFrame, text=gettextRcmdr("Type name of model to plot"), fg="blue"), sticky="w")
+   tkgrid(statEntry, sticky="w")
+   tkgrid(statFrame, labelRcmdr(labelsFrame, text=" (Should be name of existing model object)  "), sticky="w")
+    onOK <- function(){
     closeDialog()
-    .activeDataSet <- ActiveDataSet()
-    title <- trim.blanks(tclvalue(titleVar))
-    title <- if(title == gettextRcmdr("<auto>")) "" else paste(', title="', title, '"', sep="")
-    activateMenus()
-    tkfocus(CommanderWindow())
-  }
-  OKCancelHelp(helpSubject="FunnelPlot")
-  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
-               values=c("fixed", "random"),
-               labels=gettextRcmdr(c("fixed", "random")), 
-               title=gettextRcmdr("Model"))
-  tkgrid(modelFRFrame, sticky="w")
-  tkgrid(labelsFrame, sticky="w")
-  tkgrid(labelRcmdr(top, text=" "))
-  tkgrid(buttonsFrame, columnspan=2, sticky="w")
-  dialogSuffix(rows=8, columns=2)
+    stat <- trim.blanks(tclvalue(statVar))
+       stat <- paste (' ', stat, '', sep="") 
+    doItAndPrint(paste("funnel(", stat, " )", sep=""))
+    }
+    OKCancelHelp(helpSubject="funnel", model=TRUE)
+    
+    tkgrid(labelsFrame, sticky="w") 
+    tkgrid.configure(helpButton, sticky="e")
+    tkgrid(buttonsFrame, stick="w")
+    dialogSuffix(rows=5, columns=3)
 }
+
+
+#FunnelPlotcmd <- function(){
+#  initializeDialog(title=gettextRcmdr("Funnel Plot"))
+#  variablesFrame <- tkframe(top)
+#  UpdateModelNumber()
+#  modelName <- tclVar(paste("FunnelGraph.", getRcmdr("modelNumber"), sep=""))
+#  labelsFrame <- tkframe(top)
+#  titleVar <- tclVar(gettextRcmdr("<auto>"))
+#  titleFrame <- tkframe(labelsFrame)
+#  titleEntry <- ttkentry(titleFrame, width="25", textvariable=titleVar)
+#  titleScroll <- ttkscrollbar(titleFrame, orient="horizontal",
+#  command=function(...) tkxview(titleEntry, ...))
+#  tkconfigure(titleEntry, xscrollcommand=function(...) tkset(titleScroll, ...))
+#  tkgrid(labelRcmdr(titleFrame, text=gettextRcmdr("title"), fg="blue"), sticky="w")
+#  tkgrid(titleEntry, sticky="w")
+#  tkgrid(titleScroll, sticky="ew")
+#  tkgrid(titleFrame, labelRcmdr(labelsFrame, text="     "), sticky="w")
+#  onOK <- function(){
+#    closeDialog()
+#    .activeDataSet <- ActiveDataSet()
+#    title <- trim.blanks(tclvalue(titleVar))
+#    title <- if(title == gettextRcmdr("<auto>")) "" else paste(', title="', title, '"', sep="")
+#    activateMenus()
+#    tkfocus(CommanderWindow())
+#  }
+#  OKCancelHelp(helpSubject="FunnelPlot")
+#  radioButtons(name="modelFR", buttons=c("Fixed", "Random"), 
+#               values=c("fixed", "random"),
+#               labels=gettextRcmdr(c("fixed", "random")), 
+#               title=gettextRcmdr("Model"))
+#  tkgrid(modelFRFrame, sticky="w")
+#  tkgrid(labelsFrame, sticky="w")
+#  tkgrid(labelRcmdr(top, text=" "))
+#  tkgrid(buttonsFrame, columnspan=2, sticky="w")
+#  dialogSuffix(rows=8, columns=2)
+#}
 
 
 #MultiModGraph
@@ -2401,15 +2546,6 @@ Kappacmd <- function(){
   tkgrid(variablesFrame, sticky="w")
   dialogSuffix(rows=8, columns=2)
 }
-
-
-
-
-
-
-
-
-
 
 
 

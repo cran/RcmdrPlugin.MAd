@@ -1,8 +1,8 @@
 Package: RcmdrPlugin.MAd
 Type: Package
 Title: Meta-Analysis with Mean Differences (MAd) Rcmdr Plug-in
-Version: 0.5
-Date: 2011-06-07
+Version: 0.6.1
+Date: 2011-06-20
 Author: AC Del Re
 Maintainer: AC Del Re <acdelre@gmail.com>
 Description: This is an R-Commander plug-in for the MAd package
@@ -26,6 +26,5 @@ Log-Exceptions:
 Models:
 URL:
         http://rwiki.sciviews.org/doku.php?id=packages:cran:ma_meta-analysis
-Packaged: 2011-06-09 06:04:04 UTC; hornik
 Repository: CRAN
-Date/Publication: 2011-06-09 06:05:39
+Date/Publication: 2011-06-19 19:33:44
